@@ -1,134 +1,220 @@
-❤️ SecretHealthMetrics — Private Match (FHEVM dApp)
+# 🧬 SecretHealthMetrics — Fully Encrypted Health Match (FHEVM dApp)
 
-A decentralized fully homomorphic encrypted matchmaking dApp on Ethereum (Sepolia testnet) using Zama’s FHEVM protocol.
-Profiles and preferences are encrypted → matched on-chain → only the final match result is decryptable.
-No data leaks. No exposure of personal information.
+A decentralized **privacy-preserving health-compatibility matcher** built on **Zama’s FHEVM** (Sepolia testnet).
+All user data — **age group, BMI category, blood pressure index** — is encrypted end-to-end, processed homomorphically on-chain, and never revealed to anyone, not even the validators.
 
-⚡ Features
+✔ No plaintext data
+✔ No metadata leakage
+✔ 100% on-chain encrypted comparison
+✔ Built with official **Zama FHEVM Solidity libraries** + **Relayer SDK v0.3.0**
 
-Publish encrypted user profiles (age, gender, interests, region)
+---
 
-Submit encrypted match preferences
+## ✨ Features
 
-Homomorphic computation of match compatibility directly on-chain
+* 🔐 **Encrypted Citizen Profiles**
+  Age group, BMI category, and BP index submitted as encrypted FHE values.
 
+* 🏙 **Encrypted Regional Thresholds**
+  Regions define minimum/maximum encrypted criteria.
 
-Zero knowledge of inputs — full privacy preserved
+* 🧠 **Homomorphic On-Chain Matching**
+  FHE comparisons (`FHE.ge`, `FHE.le`, `FHE.and`) compute compatibility entirely under encryption.
 
-Modern dual-column glassmorphic UI built with pure HTML + CSS
+* 🎯 **Zero-Knowledge of Inputs**
+  Neither nodes nor the contract sees any plaintext.
 
-Powered by Zama Relayer SDK v0.3.0 and Ethers.js v6
+* 🔓 **Controlled Decryption**
+  Users can privately decrypt match results or make them publicly decryptable.
 
-🛠 Quick Start
-Prerequisites
+* 🧊 **Modern Glassmorphic UI**
+  Clean dual-column interface using pure HTML + CSS.
 
-Node.js ≥ 20
+* 🔗 **Relayer SDK Powered**
+  Fully integrated encrypted/frontend flows using Zama’s official tools.
 
-npm / yarn / pnpm
+---
 
-MetaMask or any injected Ethereum-compatible wallet
+## 🏗 Technology Stack
 
-Installation
-Clone the repository
-git clone <your-repo-url>
-cd EncryptedCertificationFilter
+| Layer                   | Tools                                     |
+| ----------------------- | ----------------------------------------- |
+| Smart Contracts         | Solidity + Zama FHEVM (`@fhevm/solidity`) |
+| Encryption / Decryption | Zama Relayer SDK v0.3.0                   |
+| Frontend                | Vanilla JS, HTML, CSS                     |
+| Wallet                  | MetaMask / any EIP-1193 provider          |
+| Node Framework          | Hardhat                                   |
+| Network                 | Sepolia FHEVM Testnet                     |
 
-Install dependencies
+---
+
+## 📦 Project Structure
+
+```
+tinderdao-private-match/
+├── contracts/
+│   └── SecretHealthMetrics.sol      # Main FHE health matching contract
+├── deploy/                          # Deployment scripts
+├── frontend/
+│   └── index.html                   # UI + Relayer SDK integration
+├── hardhat.config.js
+├── package.json
+└── README.md
+```
+
+---
+
+## ⚙️ Smart Contract Overview
+
+The `SecretHealthMetrics` contract uses **encrypted types**:
+
+* `euint8` for age group & BMI category
+* `euint16` for blood pressure index
+* `ebool` for encrypted logical results
+
+### Matching Logic (homomorphic)
+
+```
+ageOk = citizen.ageGroup ≥ region.minAgeGroup
+bmiOk = citizen.bmiCategory ≤ region.maxBmiCategory
+bpOk  = citizen.bpIndex ≤ region.maxBpIndex
+
+match = ageOk AND bmiOk AND bpOk
+```
+
+All comparisons are done using **FHE operators**, and the final result is stored as an `euint8` (0 or 1).
+
+Users (citizen or region owner) may privately decrypt or publish the result.
+
+---
+
+## 🚀 Quick Start
+
+### **Prerequisites**
+
+* Node.js ≥ 20
+* npm / yarn / pnpm
+* MetaMask or any injected Ethereum wallet
+* Infura/Alchemy RPC key (Sepolia)
+
+---
+
+## 🔧 Installation
+
+```bash
+git clone https://github.com/mokou312/SecretHealthMetrics
+cd SecretHealthMetrics
 npm install
+```
 
-Set up environment variables
+---
+
+## 🔐 Environment Setup
+
+```bash
 npx hardhat vars set MNEMONIC
 npx hardhat vars set INFURA_API_KEY
 npx hardhat vars set ETHERSCAN_API_KEY   # optional
+```
 
-Compile Contracts
+---
+
+## 🧪 Compile & Test
+
+```bash
 npm run compile
-
-Run Tests
 npm run test
+```
 
-Deploy to Local Network
+---
+
+## 🛠 Local Deployment
+
+Start a local FHEVM dev node:
+
+```bash
 npx hardhat node
+```
+
+Deploy:
+
+```bash
 npx hardhat deploy --network localhost
+```
 
-Deploy to Sepolia FHEVM Testnet
+---
+
+## 🌐 Deployment to Sepolia FHEVM
+
+```bash
 npx hardhat deploy --network sepolia
-npx hardhat verify --network sepolia 
+npx hardhat verify --network sepolia
+```
 
-CONTRACT_ADDRESS: "0x3A32DDCDA724d8329E139ad60b98432D9C4A0cf2"
+**Latest Deployment Address:**
+`0x3A32DDCDA724d8329E139ad60b98432D9C4A0cf2`
 
+---
 
-📁 Project Structure
-tinderdao-private-match/
-├── contracts/
-│   └── SecretHealthMetrics.sol              # Main FHE-enabled matchmaking contract
-├── deploy/                                  # Deployment scripts
-├── frontend/                                # Web UI (FHE Relayer integration)
-│   └── index.html
-├── hardhat.config.js                        # Hardhat + FHEVM config
-└── package.json                             # Dependencies and npm scripts
+## 🖥 Frontend Integration (Relayer SDK)
 
-📜 Available Scripts
-Command	Description
-npm run compile	Compile all smart contracts
-npm run test	Run unit tests
-npm run clean	Clean build artifacts
-npm run start	Launch frontend locally
-npx hardhat deploy --network sepolia	Deploy to FHEVM Sepolia testnet
-npx hardhat verify	Verify contract on Etherscan
-🔗 Frontend Integration
+Frontend uses:
 
-The frontend (pure HTML + vanilla JS) uses:
+* `@zama-fhe/relayer-sdk` v0.3.0
+* `ethers.js` v6.13
 
-@zama-fhe/relayer-sdk v0.3.0
+### Workflow
 
-ethers.js v6.13
+1. Connect wallet
+2. Encrypt health data using Relayer SDK
+3. Submit encrypted profile / region thresholds
+4. Compute FHE match via `computeHealthMatch()`
+5. Make the result public (optional)
+6. Public or private decrypt
 
-Web3 wallet (MetaMask) connection
+Supports both **userDecrypt()** (private) and **publicDecrypt()**.
 
-Workflow:
+---
 
-Connect wallet
+## 🔒 FHEVM Highlights
 
-Encrypt & Submit a preference query (desired criteria)
+* Encrypted integer & boolean types
+* Homomorphic logic: `FHE.le`, `FHE.ge`, `FHE.and`
+* Secure access control:
 
-Compute match handle via computeMatchHandle()
+  * `FHE.allow`
+  * `FHE.allowThis`
+  * `FHE.allowTransient`
+* Public decryption: `FHE.makePubliclyDecryptable`
+* Zero-Knowledge attestation of encrypted inputs
 
-Make public the result using makeMatchPublic()
+---
 
-Publicly decrypt → get final result (MATCH ✅ / NO MATCH ❌)
+## 📚 Documentation
 
-🧩 FHEVM Highlights
+* **Zama FHEVM Overview**
+  [https://docs.zama.ai/protocol](https://docs.zama.ai/protocol)
 
-Encrypted types: euint8, euint16
+* **Relayer SDK Guide**
+  [https://docs.zama.ai/protocol/relayer-sdk-guides/](https://docs.zama.ai/protocol/relayer-sdk-guides/)
 
-Homomorphic operations: FHE.eq, FHE.and, FHE.or, FHE.gt, FHE.lt
+* **Solidity FHE Library**
+  [https://github.com/zama-ai/fhevm-solidity](https://github.com/zama-ai/fhevm-solidity)
 
-Secure access control using FHE.allow & FHE.allowThis
+* **Ethers.js v6**
+  [https://docs.ethers.org/v6/](https://docs.ethers.org/v6/)
 
-Public decryption enabled with FHE.makePubliclyDecryptable
+---
 
-Frontend encryption/decryption handled via Relayer SDK proofs
+## 🆘 Support
 
-📚 Documentation
+* 🐛 GitHub Issues — bug reports & feature requests
+* 💬 Zama Discord: **[https://discord.gg/zama-ai](https://discord.gg/zama-ai)**
 
-Zama FHEVM Overview
+---
 
-Relayer SDK Guide
+## 📄 License
 
-Solidity Library: FHE.sol
+**BSD-3-Clause-Clear**
+See the `/LICENSE` file for full details.
 
-Ethers.js v6 Documentation
-
-🆘 Support
-
-🐛 GitHub Issues: Report bugs or feature requests
-
-💬 Zama Discord: discord.gg/zama-ai
- — community help
-
-📄 License
-
-BSD-3-Clause-Clear License
-See the LICENSE
- file for full details.
